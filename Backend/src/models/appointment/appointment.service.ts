@@ -1,53 +1,33 @@
 import { GraphQLError } from "graphql";
 import { ApolloServerErrorCode } from "@apollo/server/errors";
-import { AppointmentModel } from "./appointment.model";
+import mongoose from "mongoose";
+import { AppointmentModel, AppointmentDocument } from "./appointment.model";
+import { requiredTrimmed } from "../../utils/registrationUtils";
+import { decodeToken } from "../../utils/jwt";
 
-export type AppointmentInput = {
-  name: string;
-  email: string;
-  department: string;
+export type CreateAppointmentInput = {
+  doctor_id: string;
+  jwtToken: string;
   time: string;
 };
 
-function requiredTrimmed(value: unknown, fieldName: string): string {
-  if (typeof value !== "string") {
-    throw new GraphQLError(`${fieldName} is required`, {
-      extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-    });
-  }
 
-  const trimmed = value.trim();
-  if (!trimmed) {
-    throw new GraphQLError(`${fieldName} is required`, {
-      extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-    });
-  }
-
-  return trimmed;
-}
-
-export async function createAppointment(input: AppointmentInput) {
-  const name = requiredTrimmed(input?.name, "name");
-  const email = requiredTrimmed(input?.email, "email").toLowerCase();
-  const department = requiredTrimmed(input?.department, "department");
-  const time = requiredTrimmed(input?.time, "time");
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/i.test(email)) {
-    throw new GraphQLError("Invalid email address", {
-      extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-    });
-  }
-
+export async function createAppointment(
+  input: CreateAppointmentInput
+): Promise<AppointmentDocument> {
+  const time = requiredTrimmed(input.time, "time");
+  const doctor_id = requiredTrimmed(input.doctor_id, "doctor_id");
+  const jwtToken = requiredTrimmed(input.jwtToken, "jwtToken");
+  const patient_id = decodeToken(jwtToken).sub;
 
   try {
     return await AppointmentModel.create({
-      name,
-      email,
-      department,
+      doctor_id: new mongoose.Types.ObjectId(doctor_id),
+      patient_id: new mongoose.Types.ObjectId(patient_id),
       time,
     });
   } catch (err) {
-    // Avoid leaking internal DB errors
+    console.error("Error in appointment.service.ts:", err);
     throw new GraphQLError("Failed to book appointment", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });

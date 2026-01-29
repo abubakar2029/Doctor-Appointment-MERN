@@ -1,19 +1,20 @@
 import { gql } from "@apollo/client";
 
 export type AppointmentInput = {
-  name: string;
-  email: string;
-  department: string;
+  doctor_id: string;
+  jwtToken: string;
   time: string;
 };
 
-export type Appointment = AppointmentInput & {
-  createdAt: string;
+export type Appointment = {
+  doctor_id: string;
+  patient_id: string;
+  time: string;
+  status: string;
 };
 
 export type BookAppointmentPayload = {
   success: boolean;
-  message: string;
   appointment: Appointment;
 };
 
@@ -29,13 +30,11 @@ export const BOOK_APPOINTMENT_MUTATION = gql`
   mutation BookAppointment($input: AppointmentInput!) {
     bookAppointment(input: $input) {
       success
-      message
       appointment {
-        name
-        email
-        department
+        doctor_id
+        patient_id
         time
-        createdAt
+        status
       }
     }
   }

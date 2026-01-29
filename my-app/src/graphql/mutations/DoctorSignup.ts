@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const PATIENT_SIGNUP_MUTATION = gql`
-  mutation signupPatient(
+export const DOCTOR_SIGNUP_MUTATION = gql`
+
+  mutation signupDoctor(
     $firstName: String!
     $lastName: String!
     $email: String!
@@ -10,22 +11,24 @@ export const PATIENT_SIGNUP_MUTATION = gql`
     $dateOfBirth: String!
     $gender: String!
     $address: String
+    $certifications: [CertificationInput!]
   ) {
-    signupPatient(
+    signupDoctor(
       input: {
         firstName: $firstName
         lastName: $lastName
-        password: $password 
+        password: $password
         email: $email
         phone: $phone
         dateOfBirth: $dateOfBirth
         gender: $gender
         address: $address
+        certifications: $certifications
       }
     ) {
       success
       token
-      patient {
+      doctor {
         firstName
         lastName
         email
@@ -33,6 +36,9 @@ export const PATIENT_SIGNUP_MUTATION = gql`
         dateOfBirth
         gender
         address
+        certifications {
+          name
+        }
       }
     }
   }

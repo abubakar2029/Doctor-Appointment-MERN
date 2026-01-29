@@ -23,7 +23,7 @@ export type CheckTokenQueryData = {
 export async function validateToken(
     client: ApolloClient
 ): Promise<boolean> {
-    const token = localStorage.getItem("token");
+    const token = JSON.parse(localStorage.getItem("payload") || "null")?.token;
     if (!token) return false;
 
     try {
@@ -39,10 +39,10 @@ export async function validateToken(
 
         if (data.checkToken.success) return true;
 
-        localStorage.removeItem("token");
+        localStorage.removeItem("payload");
         return false;
     } catch {
-        localStorage.removeItem("token");
+        localStorage.removeItem("payload");
         return false;
     }
 }

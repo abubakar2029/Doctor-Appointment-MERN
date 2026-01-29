@@ -1,21 +1,44 @@
-import PrimaryInput from "./PrimaryInput";
 import { useForm } from "react-hook-form";
 import { useBookAppointment } from "../../hooks/useBookAppointment";
-import type { AppointmentInput } from "../../graphql/mutations/bookAppointment";
+import { useQuery } from "@apollo/client/react";
+import { GET_ALL_DOCTORS_QUERY, type GetAllDoctorsData } from "../../graphql/queries/getAllDoctors";
+import { useEffect, useState } from "react";
+
+interface AppointmentFormData {
+    doctor_id: string;
+    jwtToken: string;
+    time: string;
+}
 
 export function BookAppointment() {
     const { bookAppointment, data, loading, error, reset: resetMutation } = useBookAppointment();
+    const { data: doctorsData, loading: doctorsLoading, error: doctorsError } = useQuery<GetAllDoctorsData>(GET_ALL_DOCTORS_QUERY);
+    const [doctors, setDoctors] = useState<Array<{ id: string; firstName: string; }>>([]);
+
+    // useEffect(() => {
+    //     if (doctorsData?.getAllDoctors) {
+    //         setDoctors(doctorsData.getAllDoctors);
+    //     }
+    // }, [doctorsData]);
+
+    const [jwtToken, setJwtToken] = useState<string | null>(null);
+
+    useEffect(() => {
+        const tokenData = JSON.parse(localStorage.getItem("payload") || "null");
+        if (tokenData?.token) {
+            setJwtToken(tokenData.token);
+        }
+    }, []);
 
     const {
         register,
         handleSubmit,
         reset,
         formState: { errors, isSubmitting },
-    } = useForm<AppointmentInput>({
+    } = useForm<AppointmentFormData>({
         defaultValues: {
-            name: "",
-            email: "",
-            department: "",
+            doctor_id: "",
+            jwtToken: jwtToken || "temp-jwt-token",
             time: "4:00",
         },
         mode: "onSubmit",
@@ -27,15 +50,7 @@ export function BookAppointment() {
         reset();
     });
 
-    const nameField = register("name", { required: "Name is required" });
-    const emailField = register("email", {
-        required: "Email is required",
-        pattern: {
-            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i,
-            message: "Enter a valid email address",
-        },
-    });
-    const departmentField = register("department", { required: "Department is required" });
+    const doctorField = register("doctor_id", { required: "Doctor is required" });
     const timeField = register("time", { required: "Time is required" });
 
     return (
@@ -46,69 +61,38 @@ export function BookAppointment() {
             </h1>
 
             <form className="flex flex-col gap-5" onSubmit={onSubmit}>
-                {/* Name Field */}
+                {/* Doctor Field */}
                 <div>
                     <label className="block text-sm font-medium text-slate-800 mb-2">
-                        Name <span className="text-slate-800">*</span>
+                        Select Doctor <span className="text-slate-800">*</span>
                     </label>
-                    <PrimaryInput
-                        customClasses="!w-full !border-gray-200"
-                        placeholder="Full Name *"
-                        aria-invalid={Boolean(errors.name)}
-                        {...nameField}
-                        onChange={(e) => {
-                            resetMutation();
-                            nameField.onChange(e);
-                        }}
-                    />
-                    {errors.name?.message && (
-                        <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                    {doctorsLoading ? (
+                        <div className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-400 bg-gray-50">
+                            Loading doctors...
+                        </div>
+                    ) : (
+                        <select
+                            className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-600 bg-white focus:outline-none focus:border-teal-500 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_1rem_center] bg-[length:1rem]"
+                            aria-invalid={Boolean(errors.doctor_id)}
+                            {...doctorField}
+                            onChange={(e) => {
+                                resetMutation();
+                                doctorField.onChange(e);
+                            }}
+                        >
+                            <option value="">Please Select a Doctor</option>
+                            {doctors.map((doctor) => (
+                                <option key={doctor.id} value={doctor.id}>
+                                    {doctor.firstName}
+                                </option>
+                            ))}
+                        </select>
                     )}
-
-                </div>
-
-                {/* Email Field */}
-                <div>
-                    <label className="block text-sm font-medium text-slate-800 mb-2">
-                        Email address <span className="text-slate-800">*</span>
-                    </label>
-                    <PrimaryInput
-                        customClasses="!w-full !border-gray-200"
-                        placeholder="example@gmail.com"
-                        aria-invalid={Boolean(errors.email)}
-                        {...emailField}
-                        onChange={(e) => {
-                            resetMutation();
-                            emailField.onChange(e);
-                        }}
-                    />
-                    {errors.email?.message && (
-                        <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                    {doctorsError && (
+                        <p className="mt-1 text-sm text-red-600">Failed to load doctors</p>
                     )}
-
-                </div>
-
-                {/* Department Field */}
-                <div>
-                    <label className="block text-sm font-medium text-slate-800 mb-2">
-                        Departement <span className="text-slate-800">*</span>
-                    </label>
-                    <select
-                        className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-400 bg-white focus:outline-none focus:border-teal-500 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_1rem_center] bg-[length:1rem]"
-                        aria-invalid={Boolean(errors.department)}
-                        {...departmentField}
-                        onChange={(e) => {
-                            resetMutation();
-                            departmentField.onChange(e);
-                        }}
-                    >
-                        <option value="">Please Select</option>
-                        <option value="cardiology">Cardiology</option>
-                        <option value="neurology">Neurology</option>
-                        <option value="orthopedics">Orthopedics</option>
-                    </select>
-                    {errors.department?.message && (
-                        <p className="mt-1 text-sm text-red-600">{errors.department.message}</p>
+                    {errors.doctor_id?.message && (
+                        <p className="mt-1 text-sm text-red-600">{errors.doctor_id.message}</p>
                     )}
                 </div>
 
@@ -143,7 +127,7 @@ export function BookAppointment() {
 
                 {data?.bookAppointment?.success && (
                     <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                        {data.bookAppointment.message}
+                        Appointment booked successfully!
                     </div>
                 )}
 

@@ -1,5 +1,4 @@
-export const patientTypeDefs = /* GraphQL */ `
-
+export const doctorTypeDefs = /* GraphQL */ `
   scalar Date
 
   type AuthUser {
@@ -12,8 +11,11 @@ export const patientTypeDefs = /* GraphQL */ `
     user: AuthUser
   }
 
-  
-  type Patient {
+  type Certification {
+    name: String!
+  }
+
+  type Doctor {
     id: ID!
     firstName: String!
     lastName: String!
@@ -22,33 +24,44 @@ export const patientTypeDefs = /* GraphQL */ `
     dateOfBirth: String!
     gender: String!
     address: String
+    certifications: [Certification!]
     role: String!
   }
 
-  input SignupPatientInput {
+  input CertificationInput {
+    name: String!
+    base64: String!
+  }
+
+  input SignupDoctorInput {
     firstName: String!
     lastName: String!
     email: String!
+    password: String!
     phone: String!
     dateOfBirth: String!
     gender: String!
-    address: String    
-    password: String!
-    assignedDoctors: [ID!]
+    address: String
+    certifications: [CertificationInput!]
   }
 
-  type SignupPatientPayload {
+  type SignupDoctorPayload {
     success: Boolean!
     token: String!
-    patient: Patient!
+    doctor: Doctor!
   }
 
+  type getAllDoctorsPayload {
+    id: ID!
+    firstName: String!
+  }
+    
   extend type Query {
     checkToken: CheckTokenPayload!
+    getAllDoctors: [getAllDoctorsPayload!]!
   }
 
   extend type Mutation {
-    signupPatient(input: SignupPatientInput!): SignupPatientPayload!
+    signupDoctor(input: SignupDoctorInput!): SignupDoctorPayload!
   }
 `;
-

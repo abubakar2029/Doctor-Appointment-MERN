@@ -6,7 +6,7 @@ import { PATIENT_SIGNUP_MUTATION } from "@/graphql/mutations/patientSignup";
 import { useNavigate } from "react-router-dom";
 import { validateToken } from "@/lib/checkToken";
 import { useApolloClient } from "@apollo/client/react";
-
+import { Link } from "react-router-dom";
 
 export default function PatientSignupForm() {
 
@@ -67,7 +67,7 @@ export default function PatientSignupForm() {
 
                 console.log(data);
 
-                localStorage.setItem("token", data.signupPatient.token);
+                localStorage.setItem("payload", JSON.stringify(data.signupPatient));
 
                 setTimeout(() => {
                     navigate("/");
@@ -163,7 +163,7 @@ export default function PatientSignupForm() {
 
                     <div>
                         <label className="block text-sm font-medium text-gray-600 mb-1.5">
-                            Phone Number *
+                            Password *
                         </label>
                         <PrimaryInput
                             type="password"
@@ -261,6 +261,10 @@ export default function PatientSignupForm() {
                         <Check className="w-5 h-5" />
                         {loading ? "Submitting..." : "Submit Registration"}
                     </button>
+                    <div className="text-teal-600 text-sm flex flex-col gap-y-1 justify-center items-center">
+                        <Link to="/doctorSignup" className="hover:underline">Register as Doctor</Link>
+                        <Link to="/login" className="hover:underline">Already have an account? Login</Link>
+                    </div>
                 </form>
             </div>
         </main>

@@ -1,5 +1,6 @@
 import { appointmentTypeDefs } from "../models/appointment/appointment.typeDefs";
 import { patientTypeDefs } from "../models/patient/patient.typeDefs";
+import { doctorTypeDefs } from "../models/doctor/doctor.typeDefs";
 
 const baseTypeDefs = /* GraphQL */ `
   type Query {
@@ -11,5 +12,5 @@ const baseTypeDefs = /* GraphQL */ `
   }
 `;
 
-export const typeDefs = [baseTypeDefs, appointmentTypeDefs, patientTypeDefs];
+export const typeDefs = [baseTypeDefs, appointmentTypeDefs, patientTypeDefs, doctorTypeDefs];
 

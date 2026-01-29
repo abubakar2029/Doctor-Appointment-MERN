@@ -7,9 +7,20 @@ if (!process.env.JWT_SECRET) {
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export interface AuthTokenPayload extends JwtPayload {
-    id: string;
+    sub: string;
     email: string;
 }
+
+type DecodedToken = JwtPayload & {
+    sub: string;
+    email: string;
+};
+
+
+export const decodeToken = (token: string): DecodedToken => {
+    return jwt.verify(token, JWT_SECRET) as DecodedToken;
+};
+
 
 export const signToken = (user: { _id: string; email: string }): string => {
     return jwt.sign(

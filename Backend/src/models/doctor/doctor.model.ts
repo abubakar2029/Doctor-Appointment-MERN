@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+import { ref } from "process";
 
-export type Patient = {
+export type Doctor = {
   firstName: string;
   lastName: string;
   email: string;
@@ -9,13 +10,17 @@ export type Patient = {
   gender: "male" | "female" | "other" | "prefer-not-to-say";
   address?: string;
   passwordHash: string;
-  assignedDoctors: mongoose.Types.ObjectId[];
-  role: "patient";
+  patients: mongoose.Types.ObjectId[];
+  certifications: {
+    name: string;
+    pdf: Buffer;
+  }[];
+  role: "doctor";
 };
 
-export type PatientDocument = mongoose.HydratedDocument<Patient>;
+export type DoctorDocument = mongoose.HydratedDocument<Doctor>;
 
-const PatientSchema = new Schema<Patient>(
+const DoctorSchema = new Schema<Doctor>(
   {
     firstName: {
       type: String,
@@ -43,32 +48,48 @@ const PatientSchema = new Schema<Patient>(
     gender: {
       type: String,
       required: true,
+      trim: true,
       enum: ["male", "female", "other", "prefer-not-to-say"],
     },
     address: {
       type: String,
+      trim: true,
     },
     passwordHash: {
       type: String,
       required: true,
       select: false,
     },
-    role: {
-      type: String,
-      enum: ["patient"],
-      default: "patient",
-      immutable: true, // 👈 prevents updates later
-    },
-    assignedDoctors: [
+    patients: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Doctor",
+        ref: "Patient",
       },
     ],
 
-  },
-  { timestamps: true }
+    certifications: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        pdf: {
+          type: Buffer,
+          required: true,
+          select: false,
+        },
+      },
+    ],
+    role: {
+      type: String,
+      enum: ["doctor"],
+      default: "doctor",
+      immutable: true, // 👈 prevents updates later
+    },
+
+  }
+
 );
 
-export const PatientModel =
-  mongoose.models.Patient || mongoose.model<Patient>("Patient", PatientSchema);
+export const DoctorModel =
+  mongoose.models.Doctor || mongoose.model<Doctor>("Doctor", DoctorSchema);

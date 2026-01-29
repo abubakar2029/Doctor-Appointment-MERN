@@ -1,11 +1,11 @@
 import { GraphQLError } from "graphql";
 import { ApolloServerErrorCode } from "@apollo/server/errors";
-import { PatientModel } from "./patient.model";
+import { DoctorModel } from "./doctor.model";
 import bcrypt from "bcryptjs";
 import { existingEmail, passwordLength, requiredTrimmed, validateEmailFormat, validateGender, validatePhone } from "../../utils/registrationUtils";
 import { signToken } from "../../utils/jwt";
 
-export type SignupPatientInput = {
+export type SignupDoctorInput = {
     password: string;
     firstName: string;
     lastName: string;
@@ -15,10 +15,14 @@ export type SignupPatientInput = {
     gender: "male" | "female" | "other" | "prefer-not-to-say";
     address?: string;
     assignedDoctors: any[];
+    certifications?: {
+        name: string;
+        base64: string;
+    }[];
 };
 
 
-export async function signupPatient(input: SignupPatientInput) {
+export async function signupDoctor(input: SignupDoctorInput) {
     const firstName = requiredTrimmed(input?.firstName, "firstName");
     const lastName = requiredTrimmed(input?.lastName, "lastName");
     const email = requiredTrimmed(input?.email, "email").toLowerCase();
@@ -27,23 +31,25 @@ export async function signupPatient(input: SignupPatientInput) {
     const gender = requiredTrimmed(input?.gender, "gender").toLowerCase();
     const address = input?.address?.trim();
     const password = requiredTrimmed(input?.password, "password");
+    const certifications = input.certifications || [];
 
-
-    validateEmailFormat(email);
-    validatePhone(phone);
-
-    // Validate gender (matches frontend options)
-    validateGender(gender);
-
-    passwordLength(password);
 
     try {
+        validateEmailFormat(email);
+        validatePhone(phone);
+        validateGender(gender);
+        passwordLength(password);
 
         await existingEmail(email);
 
         const passwordHash = await bcrypt.hash(password, 12);
 
-        const patientDoc = await PatientModel.create({
+        const certsBuffer = certifications.map((c) => ({
+            name: c.name,
+            pdf: Buffer.from(c.base64, "base64"),
+        }));
+
+        const doctorDoc = await DoctorModel.create({
             firstName,
             lastName,
             email,
@@ -51,14 +57,17 @@ export async function signupPatient(input: SignupPatientInput) {
             dateOfBirth,
             gender,
             address,
+            certifications: certsBuffer,
             passwordHash,
-            role: "patient",
+            role: "doctor",
         });
 
-        const token = signToken({ _id: patientDoc._id.toString(), email: patientDoc.email });
+        const token = signToken({ _id: doctorDoc._id.toString(), email: doctorDoc.email });
 
-        return { patientDoc, token };
+        return { doctorDoc, token };
     } catch (err) {
+        console.error("signupDoctor error:", err);
+
         if (err instanceof GraphQLError) {
             throw err;
         }

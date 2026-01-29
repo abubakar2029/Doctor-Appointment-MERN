@@ -1,19 +1,10 @@
 import type { Patient } from "./patient.model";
-import { signupPatient } from "./patient.service";
+import { signupPatient, SignupPatientInput } from "./patient.service";
 import { PatientModel } from "./patient.model";
 import { verifyToken } from "../../utils/jwt";
 
 type SignupPatientArgs = {
-    input: {
-        firstName: string;
-        lastName: string;
-        email: string;
-        phone: string;
-        dateOfBirth: string;
-        gender: string;
-        address?: string;
-        password: string;
-    };
+    input: SignupPatientInput;
 };
 
 export const patientResolvers = {
@@ -71,7 +62,6 @@ export const patientResolvers = {
             args: SignupPatientArgs
         ): Promise<{
             success: boolean;
-            message: string;
             token: string;
             patient: {
                 firstName: string;
@@ -91,7 +81,6 @@ export const patientResolvers = {
 
             return {
                 success: true,
-                message: "Patient account created successfully",
                 token,
                 patient: {
                     firstName: patient.firstName,

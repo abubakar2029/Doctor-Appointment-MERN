@@ -30,7 +30,7 @@ function Navbar() {
                 <div className="inline-flex md:order-2 space-x-7 rtl:space-x-reverse">
 
                     <Link
-                        to={"/signup"}
+                        to={"/patientSignup"}
                         type="button"
                         className="text-primary underline-expand  box-border border border-transparent font-medium leading-5 rounded-base text-sm py-2"
                     >
@@ -80,6 +80,12 @@ function Navbar() {
                             className="block py-2 hover:text-primary transition-all duration-300 underline-expand px-3 rounded md:bg-transparent md:p-0"
                         >
                             Home
+                        </Link>
+                        <Link
+                            to={"/appointments"}
+                            className="block py-2 hover:text-primary transition-all duration-300 underline-expand px-3 rounded md:bg-transparent md:p-0"
+                        >
+                            Appointments
                         </Link>
                     </ul>
                 </div>
