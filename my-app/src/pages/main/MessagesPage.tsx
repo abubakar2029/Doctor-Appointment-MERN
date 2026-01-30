@@ -25,6 +25,7 @@ interface Message {
 
 function MessagesPage() {
   const [selectedConversation, setSelectedConversation] = useState<string | null>('1')
+  const [showChatWindow, setShowChatWindow] = useState(true)
   const [conversations, setConversations] = useState<Conversation[]>([
     {
       id: '1',
@@ -191,13 +192,17 @@ function MessagesPage() {
         <ConversationsList
           conversations={conversations}
           selectedId={selectedConversation}
-          onSelectConversation={setSelectedConversation}
+          onSelectConversation={(id) => {
+            setSelectedConversation(id)
+            setShowChatWindow(true)
+          }}
         />
-        {currentConversation ? (
+        {currentConversation && showChatWindow ? (
           <ChatWindow
             conversation={currentConversation}
             messages={currentMessages}
             onSendMessage={handleSendMessage}
+            onBackClick={() => setShowChatWindow(false)}
           />
         ) : (
           <div className="messages-empty-state">

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Phone, Video, Info, Send, Paperclip, Smile } from 'lucide-react'
+import { Phone, Video, Info, Send, Paperclip, Smile, ArrowLeft } from 'lucide-react'
 import { getFormattedTimestamp } from '../../utils/formatTime'
 import './ChatWindow.css'
 
@@ -27,9 +27,10 @@ interface ChatWindowProps {
   conversation: Conversation
   messages: Message[]
   onSendMessage: (message: string) => void
+  onBackClick?: () => void
 }
 
-function ChatWindow({ conversation, messages, onSendMessage }: ChatWindowProps) {
+function ChatWindow({ conversation, messages, onSendMessage, onBackClick }: ChatWindowProps) {
   const [messageInput, setMessageInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -60,6 +61,11 @@ function ChatWindow({ conversation, messages, onSendMessage }: ChatWindowProps) 
       {/* Chat Header */}
       <div className="chat-header">
         <div className="chat-header-left">
+          {onBackClick && (
+            <button className="back-button" onClick={onBackClick} title="Back to conversations">
+              <ArrowLeft size={24} />
+            </button>
+          )}
           <img src={conversation.avatar} alt={conversation.name} className="chat-header-avatar" />
           <div className="chat-header-info">
             <h2 className="chat-header-name">{conversation.name}</h2>
