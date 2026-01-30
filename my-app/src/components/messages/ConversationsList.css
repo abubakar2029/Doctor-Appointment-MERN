@@ -1,0 +1,264 @@
+.conversations-list-container {
+  width: 360px;
+  height: 100%;
+  border-right: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.conversations-header {
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header-top h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #000;
+  margin: 0;
+}
+
+.new-message-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #e8e8e8;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  transition: background-color 0.2s;
+}
+
+.new-message-btn:hover {
+  background-color: #d0d0d0;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  color: #999;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: #000;
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.conversations-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.conversations-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.conversations-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.conversations-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.conversations-list::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 8px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.conversation-item:hover {
+  background-color: #f0f0f0;
+}
+
+.conversation-item.active {
+  background-color: #e5e5ea;
+}
+
+.conversation-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.conversation-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.status-indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  right: 12px;
+  border: 3px solid #fff;
+}
+
+.status-indicator.online {
+  background-color: #31a24c;
+}
+
+.status-indicator.offline {
+  background-color: #b0b0b0;
+}
+
+.conversation-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.conversation-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.conversation-name {
+  font-weight: 500;
+  color: #000;
+  font-size: 15px;
+}
+
+.conversation-time {
+  font-size: 13px;
+  color: #999;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.conversation-message-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.conversation-message {
+  font-size: 13px;
+  color: #65676b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  margin: 0;
+}
+
+.unread-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #31a24c;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.no-conversations {
+  padding: 24px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .conversations-list-container {
+    width: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  .conversations-list-container {
+    width: 100%;
+    max-height: 50%;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .conversation-item {
+    padding: 12px 8px;
+  }
+
+  .conversation-avatar {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .conversations-list-container {
+    width: 100%;
+    max-height: 50%;
+  }
+
+  .header-top h1 {
+    font-size: 28px;
+  }
+
+  .conversation-item {
+    padding: 10px 8px;
+  }
+
+  .conversation-avatar {
+    width: 44px;
+    height: 44px;
+    margin-right: 8px;
+  }
+
+  .conversation-name {
+    font-size: 14px;
+  }
+
+  .conversation-message {
+    font-size: 12px;
+  }
+}

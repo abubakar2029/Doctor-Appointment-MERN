@@ -6,6 +6,7 @@ import PatientSignupForm from './pages/main/PatientSignup'
 import DoctorSignupForm from './pages/main/DoctorSignup'
 import AppointmentsPage from './pages/main/AppointmentsPage'
 import Login from './pages/main/Login'
+import MessagesPage from './pages/main/MessagesPage'
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/patientSignup" element={<PatientSignupForm />} />
           <Route path="/appointments" element={<AppointmentsPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/messages" element={<MessagesPage />} />
         </Routes>
       </MainLayout>
 

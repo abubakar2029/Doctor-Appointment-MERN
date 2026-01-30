@@ -87,6 +87,12 @@ function Navbar() {
                         >
                             Appointments
                         </Link>
+                        <Link
+                            to={"/messages"}
+                            className="block py-2 hover:text-primary transition-all duration-300 underline-expand px-3 rounded md:bg-transparent md:p-0"
+                        >
+                            Messages
+                        </Link>
                     </ul>
                 </div>
             </div>
