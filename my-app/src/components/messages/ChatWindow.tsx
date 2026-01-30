@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Phone, Video, Info, Send, Paperclip, Smile } from 'lucide-react'
+import { getFormattedTimestamp } from '../../utils/formatTime'
 import './ChatWindow.css'
 
 interface Message {
@@ -94,7 +95,11 @@ function ChatWindow({ conversation, messages, onSendMessage }: ChatWindowProps) 
                 <div className={`message ${message.senderId === 'user' ? 'sent-message' : 'received-message'}`}>
                   {message.message}
                 </div>
-                <span className="message-time">{message.timestamp}</span>
+                <span className="message-time">
+                  {message.timestamp.includes(':') 
+                    ? `Today ${message.timestamp}` 
+                    : message.timestamp}
+                </span>
               </div>
             </div>
           ))

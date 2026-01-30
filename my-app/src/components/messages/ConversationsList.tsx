@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Search, Plus } from 'lucide-react'
+import { formatConversationTime } from '../../utils/formatTime'
 import './ConversationsList.css'
 
 interface Conversation {
@@ -69,7 +70,11 @@ function ConversationsList({ conversations, selectedId, onSelectConversation }: 
               <div className="conversation-content">
                 <div className="conversation-header-row">
                   <span className="conversation-name">{conversation.name}</span>
-                  <span className="conversation-time">{conversation.lastMessageTime}</span>
+                  <span className="conversation-time">
+                    {conversation.lastMessageTime.includes(':') 
+                      ? `Today ${conversation.lastMessageTime}` 
+                      : conversation.lastMessageTime}
+                  </span>
                 </div>
                 <div className="conversation-message-row">
                   <p className="conversation-message">{conversation.lastMessage}</p>
