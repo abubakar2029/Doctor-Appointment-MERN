@@ -1,12 +1,11 @@
 const fs = require('fs');
-const path = require('path');
 
 // Read package.json
-const packageJsonPath = path.join(__dirname, '../my-app/package.json');
+const packageJsonPath = 'my-app/package.json';
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 
 // Read package-lock.json
-const lockPath = path.join(__dirname, '../my-app/package-lock.json');
+const lockPath = 'my-app/package-lock.json';
 let lockJson = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 
 // Update lockfile version and packages to match package.json
